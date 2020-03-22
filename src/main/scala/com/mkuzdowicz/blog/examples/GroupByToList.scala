@@ -36,11 +36,15 @@ object GroupByToList extends App {
     ))
   ).toDS()
 
+  investorsPortfolios.show(truncate = false)
+
   val tokensPriceReport: Dataset[CryptoTokenPriceReport] = List(
     CryptoTokenPriceReport("btc", 8000.1),
     CryptoTokenPriceReport("eth", 123.0),
     CryptoTokenPriceReport("ltc", 51.2)
   ).toDS()
+
+  tokensPriceReport.show(truncate = false)
 
   case class CryptoInvestorTmpRow(investorId: String, countryCode: String, ticker: String, count: Double)
 
@@ -52,7 +56,7 @@ object GroupByToList extends App {
     }
   }.as[CryptoInvestorTmpRow].join(tokensPriceReport, "ticker")
 
-  investorsAndPriceReportJoin.show()
+  investorsAndPriceReportJoin.show(truncate = false)
 
   val result = investorsAndPriceReportJoin.groupBy("investorId", "countryCode").agg(
     collect_list(struct("ticker", "count", "priceInUSD")) alias "tokensWithCurrentPricing"
